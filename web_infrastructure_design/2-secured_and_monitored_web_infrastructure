@@ -1,0 +1,20 @@
+                Users
+                  |
+              DNS Lookup
+                  |
+       www.foobar.com → Load Balancer (HAProxy, SSL Termination)
+                  |
+          ---------------------
+          |                   |
+       Server1              Server2
+   ------------------   ------------------
+   | Nginx (HTTPS)  |   | Nginx (HTTPS)  |
+   | App Server     |   | App Server     |
+   | Codebase       |   | Codebase       |
+   | MySQL Replica  |   | MySQL Replica  |
+   | Firewall       |   | Firewall       |
+   | Monitoring     |   | Monitoring     |
+   ------------------   ------------------
+                  |
+           Primary MySQL (Writes)
+           Firewall + Monitoring Client

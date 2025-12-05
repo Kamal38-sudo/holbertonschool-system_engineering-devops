@@ -1,0 +1,18 @@
+          User Browser
+               |
+           DNS Lookup
+               |
+       www.foobar.com  -> 8.8.8.8
+               |
+           [Single Server]
+   -------------------------------
+   |          Nginx (Web Server) |
+   |-----------------------------|
+   |      App Server (PHP/Python)|
+   |-----------------------------|
+   |     Application Files       |
+   |-----------------------------|
+   |         MySQL Database      |
+   -------------------------------
+               |
+          Response sent back

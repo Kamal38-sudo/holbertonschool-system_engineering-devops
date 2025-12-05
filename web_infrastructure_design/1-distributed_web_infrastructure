@@ -1,0 +1,25 @@
+                Users
+                  |
+              DNS Lookup
+                  |
+        www.foobar.com → Load Balancer (HAProxy)
+                  |
+          ---------------------
+          |                   |
+       Server1              Server2
+   -------------         -------------
+   | Nginx      |         | Nginx      |
+   | App Server |         | App Server |
+   | Codebase   |         | Codebase   |
+   -------------         -------------
+          |                   |
+          ---------------------
+                  |
+          Database Layer
+   -----------------------------
+   | Primary (Master)          |
+   | Handles writes            |
+   -----------------------------
+   | Replica (Slave)           |
+   | Handles reads             |
+   -----------------------------

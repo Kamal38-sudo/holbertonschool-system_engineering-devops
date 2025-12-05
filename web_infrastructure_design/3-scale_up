@@ -1,0 +1,12 @@
+                  Users
+                    |
+             DNS Lookup
+                    |
+       HAProxy Load Balancer Cluster
+           (Active-Active or Active-Passive)
+           /                        \
+      Web Server1                  Web Server2
+           |                             |
+     Application Server(s)             Application Server(s)
+           |                             |
+        Database Server (MySQL Primary/Replica)
