@@ -18,3 +18,247 @@
                   |
            Primary MySQL (Writes)
            Firewall + Monitoring Client
+
+
+
+
+
+For every additional element, why you are adding it
+Firewall
+
+Controls and filters incoming/outgoing traffic.
+
+Blocks malicious IPs, port scans, and unauthorized access.
+Added to improve security and access control.
+
+HTTPS / TLS Certificates
+
+Encrypts all communication between client and server.
+
+Prevents Man-in-the-Middle attacks.
+Added to protect data confidentiality and integrity.
+
+Monitoring System (Prometheus, Datadog, Zabbix, etc.)
+
+Collects system metrics (CPU, RAM, QPS, latency).
+
+Sends alerts when something is wrong.
+Added to detect problems early and improve visibility.
+
+Load Balancer
+
+Distributes traffic across multiple servers.
+Added to remove SPOF and increase availability.
+
+Primaryâ€“Replica Database
+
+Primary node handles writes, Replicas handle reads.
+Added to improve performance and reliability.
+
+
+
+
+What are firewalls for?
+
+A firewall is used to:
+
+Control access to the network
+
+Allow or deny specific IPs, ports, or protocols
+
+Prevent unauthorized access
+
+Reduce attack surface
+
+Block malware, scans, and suspicious traffic
+
+
+
+
+Why is the traffic served over HTTPS?
+
+HTTPS is used because:
+
+1. It encrypts the data
+
+Passwords, cookies, and sessions cannot be intercepted.
+
+2. Prevents MITM (Man-in-the-Middle) attacks
+3. Verifies server identity
+
+SSL certificates ensure the client is talking to the real server.
+
+
+
+
+
+
+What is monitoring used for?
+
+Monitoring helps to:
+
+Detect performance issues early
+
+Track server resource usage
+
+Receive alerts during failures
+
+Identify bottlenecks
+
+Ensure high availability (SLA)
+
+Analyze logs and metrics
+
+
+
+How does the monitoring tool collect data?
+
+Monitoring tools collect data using:
+
+1. Pull model (Prometheus)
+
+The monitoring server pulls metrics from each target
+
+Using endpoints like /metrics
+
+2. Push model (StatsD, CollectD)
+
+Agents push metrics to the monitoring system
+
+Data types collected:
+
+CPU, RAM, disk I/O
+
+Network usage
+
+QPS (Queries Per Second)
+
+Response time
+
+Error rate
+
+DB replication metrics
+
+System health stats
+
+Metrics are collected via agents or HTTP endpoints.
+
+
+
+
+QPS = Queries Per Second (number of requests per second)
+
+To monitor QPS:
+
+1. Enable metrics on the web server
+
+Nginx â-> stub_status
+
+Apache â-> mod_status
+
+Node.js / Python â-> Prometheus middleware
+
+
+
+
+
+PROBLEMS
+
+Why terminating SSL at the load balancer level is an issue
+
+When SSL/TLS is terminated at the load balancer, the traffic between the load balancer and the backend servers is not encrypted anymore (unless re-encrypted).
+
+This creates several security issues:
+
+Internal traffic becomes plaintext, so anyone with access to the internal network can sniff sensitive data (passwords, cookies, tokens).
+
+It breaks end-to-end encryption.
+The user thinks their data is secure all the way, but it isn't.
+
+It increases the risk if the internal network is compromised.
+
+Backend servers cannot validate the original TLS certificate.
+
+
+
+Why having only one MySQL server capable of accepting writes is an issue
+
+If you have only one Primary database handling writes:
+
+1. It becomes a Single Point of Failure (SPOF)
+
+If the Primary MySQL server fails â-> all write operations stop
+
+The entire application may become partially or fully unavailable
+
+2. Maintenance becomes difficult
+
+You cannot apply updates, patches, or configuration changes
+
+Maintenance means downtime
+
+3. Cannot scale write operations
+
+Only one server handles all inserts/updates â-> performance bottleneck
+
+High write traffic will overload the Primary
+
+4. Failover is not automatic
+
+If Primary dies, someone must manually promote a Replica â-> slow recovery
+
+
+
+
+
+Why having servers with all the same components (database, web server and application server) might be a problem
+
+If each server has all components mixed together:
+
+Web server
+
+Application server
+
+Database
+
+This creates several problems:
+1. Impossible to scale components independently
+
+If web traffic increases, you cannot add only more web servers
+
+You must add entire heavy servers with DB + app + web
+
+2. Resource conflicts
+
+Database consumes RAM and disk
+
+Application consumes CPU
+
+Web server consumes network and file I/O
+All fighting for the same resources â-> performance degradation.
+
+3. Hard to secure and manage
+
+More open ports
+
+Larger attack surface
+
+Complex configuration management
+
+4. No proper separation of concerns
+
+Database should be isolated
+
+Application servers should be stateless
+
+Web servers should only handle HTTP traffic
+
+5. Failures become catastrophic
+
+If one server fails, you lose:
+
+web layer
+
+app layer
+
+database layer

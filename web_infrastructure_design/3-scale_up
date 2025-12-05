@@ -10,3 +10,79 @@
      Application Server(s)             Application Server(s)
            |                             |
         Database Server (MySQL Primary/Replica)
+
+
+
+
+
+1)Additional Server
+
+Reason: Split components onto dedicated machines (Web, App, Database)
+
+Benefit:
+
+Reduces resource conflicts
+
+Improves security (database isolated from web layer)
+
+Makes scaling easier (can scale web or app independently)
+
+2)Load Balancer Cluster (HAProxy)
+
+Reason: High availability and redundancy for the load balancer itself
+
+Benefit:
+
+Eliminates the SPOF caused by a single load balancer
+
+Distributes traffic evenly across backend servers
+
+Performs health checks to remove failed servers automatically
+
+Cluster Mode: Two or more load balancers in Active-Active or Active-Passive setup
+
+3)Dedicated Web Server
+
+Reason: Handles HTTP/HTTPS requests and serves static content
+
+Benefit:
+
+Offloads static content serving from application servers
+
+Improves performance
+
+Can scale horizontally without touching database or app servers
+
+4)Dedicated Application Server
+
+Reason: Executes backend code and business logic
+
+Benefit:
+
+Keeps application logic separate from web and database layers
+
+Improves security (application code not exposed directly to internet)
+
+Can scale independently to handle more requests
+
+5)Dedicated Database Server
+
+Reason: Stores all persistent data in one centralized location
+
+Benefit:
+
+Dedicated resources for read/write operations
+
+Easier to maintain and back up
+
+Can implement Primary-Replica replication for high availability
+
+6)Clustered Load Balancers
+
+Reason: Avoid SPOF at the load balancer layer
+
+Benefit:
+
+If one LB fails, the other continues serving traffic
+
+Improves uptime and reliability
