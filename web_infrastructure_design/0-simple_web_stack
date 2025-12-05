@@ -16,3 +16,76 @@
    -------------------------------
                |
           Response sent back
+
+
+What is a server?
+
+A server is a computer that provides services to other computers (clients) over a network.
+
+In our case, the server hosts the web application, application code, and database.
+
+It responds to requests from user's browsers and sends back the requested data.
+
+
+What is the role of the domain name?
+
+A domain name (like foobar.com) is a human-readable address that maps to the server's IP address.
+
+Users don't need to remember numerical IP addresses like 8.8.8.8.
+
+The domain makes it easy to access the website from any browser.
+
+
+
+What type of DNS record is www in www.foobar.com?
+
+The www is a subdomain of foobar.com.
+
+It is associated with an A record in DNS, which maps the domain/subdomain to the server's IP address.
+
+
+What is the role of the web server?
+
+The web server (Nginx) handles incoming HTTP/HTTPS requests from users.
+
+It can:
+
+Serve static content (HTML, CSS, JS) directly
+
+Forward dynamic requests to the application server for processing
+
+
+
+What is the role of the application server?
+
+The application server runs the website codebase (PHP, Python, Node.js, etc.)
+
+Processes dynamic requests, interacts with the database, and generates responses.
+
+Example: when a user submits a form, the application server validates input and stores data in the database.
+
+
+What is the role of the database?
+
+The database (MySQL) stores persistent data for the website.
+
+It handles queries for:
+
+User information
+
+Posts, products, or any dynamic content
+
+Sessions and application state
+
+The application server queries the database to read or write data.
+
+
+What is the server using to communicate with the computer of the user requesting the website?
+
+The server uses the HTTP or HTTPS protocol over the internet.
+
+The communication involves:
+
+Browser sends request -> server receives
+
+Server processes request â-> generates response -> browser displays content
