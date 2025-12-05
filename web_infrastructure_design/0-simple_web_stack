@@ -89,3 +89,11 @@ The communication involves:
 Browser sends request -> server receives
 
 Server processes request â-> generates response -> browser displays content
+
+
+
+PROBLEMS
+
+1) Single Point of Failure is an important concept. This task is as follows: If server don't work, this situation will influence the whole architecture. 
+2) Maintenance cases will reflect badly on the architecture. Because, server is one.
+3) If there is a lot of traffic, it cannot scale.  

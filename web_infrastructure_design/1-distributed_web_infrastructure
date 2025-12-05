@@ -2,7 +2,7 @@
                   |
               DNS Lookup
                   |
-        www.foobar.com â†’ Load Balancer (HAProxy)
+        www.foobar.com â Load Balancer (HAProxy)
                   |
           ---------------------
           |                   |
@@ -23,3 +23,293 @@
    | Replica (Slave)           |
    | Handles reads             |
    -----------------------------
+
+
+
+For every additional element, why you are adding it
+Load Balancer (HAProxy)
+
+Reason:
+A single server cannot handle high traffic, and if it fails the entire website goes down.
+Adding a load balancer provides:
+
+High availability
+
+Traffic distribution between multiple servers
+
+Automatic failover if one server goes down
+
+Two Web/Application Servers
+
+Reason:
+Instead of running everything on one server, we split traffic between two machines:
+
+Higher capacity
+
+Increased redundancy (one server can fail, the site still works)
+
+Better performance
+
+Useful for scaling horizontally
+
+Single MySQL Database Server
+
+Reason:
+Both application servers need shared data.
+A dedicated database server allows:
+
+Centralized data storage
+
+Consistent data between application servers
+
+Better security (DB not exposed to internet)
+
+
+
+What distribution algorithm your load balancer is configured with and how it works
+Round Robin (most common and simplest)
+
+How it works:
+The load balancer sends each new request to the next server in the list, one after another.
+
+Example:
+
+Request 1   Server 1
+
+Request 2 â Server 2
+
+Request 3 â Server 1
+
+Request 4 â Server 2
+
+Advantages:
+
+Simple
+
+Effective when both servers have similar capacity
+
+Other algorithms
+
+Least Connections: send request to the server with the fewest active connections
+
+IP Hash: same client always goes to same server
+
+
+
+
+Is your load balancer Active-Active or Active-Passive? Explain the difference
+
+For Task 2, the load balancer is Active-Active, because:
+
+Both backend servers (Server 1 and Server 2) are active
+
+They both receive traffic at the same time
+
+Load balancer distributes traffic equally
+
+Active-Active
+
+â1) Multiple servers active simultaneously
+â2)Traffic is distributed across them
+â3)Better performance and scalability
+
+Active-Passive
+
+ 1)Only one active server
+â2)The second server is on standby
+â3)It becomes active only if the first fails
+
+Use Case:
+
+Active-Active -âwebsites
+
+Active-Passive â- databases or mission-critical systems
+
+
+
+How a database Primary-Replica (Master-Slave) cluster works
+
+A Primary-Replica (Master-Slave) setup means:
+
+Primary (Master)
+
+Handles write operations (INSERT, UPDATE, DELETE)
+
+Changes are recorded in replication logs
+
+Replica (Slave)
+
+Receives a copy of the Primary's data
+
+Updates continuously using replication logs
+
+Handles read operations to reduce load
+
+Data flow:
+
+Application â-> Primary DB â-> Logs â-> Replica DB
+
+
+Benefits:
+
+High availability
+
+Faster read performance
+
+Backup without affecting primary workload
+
+
+
+
+Difference between the Primary node and Replica node in regard to the application
+Primary node (Master)
+
+The only node where the application can write data
+
+Always the source of truth
+
+Must be available for the site to work properly
+
+Replica node (Slave)
+
+Application sends read-only queries to it
+
+Cannot accept writes
+
+Used for:
+
+load balancing read traffic
+
+analytics reporting
+
+backups
+
+If Primary fails:
+
+Replica may be promoted to Primary manually or automatically (with failover tools)
+
+
+
+PROBLEMS
+a) The Load Balancer is a SPOF
+
+Even though you have two backend servers, you still have only one load balancer (HAProxy).
+If the load balancer fails:
+
+No traffic can reach Server 1 or Server 2
+
+The entire website becomes unavailable
+
+This makes the load balancer the biggest SPOF.
+
+b) The Database Server is a SPOF
+
+There is only one MySQL database.
+
+If the database fails:
+
+Both servers lose access to the data
+
+The entire application breaks
+
+Users cannot log in, read data, or save anything
+
+The database is another SPOF.
+
+c) Shared Code Deployment
+
+Both servers run the same application files.
+If deployment causes a problem (syntax error, wrong version):
+
+Both servers may break
+
+The entire infrastructure goes down
+
+
+
+2. Security Issues
+a) No Firewalls
+
+There is no firewall between:
+
+Internet ->  Load balancer
+
+Load balancer ->â backend servers
+
+Backend servers ->â database
+
+Without firewalls:
+
+All ports may be exposed
+
+Attackers can scan and attack internal services
+
+Database might be reachable from outside
+
+Extremely dangerous in a real production setup.
+
+
+b) No HTTPS (Traffic is not encrypted)
+
+The infrastructure only uses HTTP.
+
+Problems:
+
+All user data travels in plain text
+
+Passwords, cookies, tokens can be stolen
+
+Vulnerable to:
+
+MITM attacks
+
+Session hijacking
+
+Packet sniffing
+
+Websites MUST use HTTPS, especially with logins.
+
+
+
+
+No Monitoring
+
+There is no monitoring tool, so:
+
+a) You cannot detect server failures
+
+If Server 1 goes down:
+
+Website becomes slower
+
+You don't know which server is failing
+
+Users will experience errors before you do
+
+b) No performance metrics
+
+You cannot see:
+
+CPU usage
+
+Memory usage
+
+QPS (Queries per second)
+
+Error rates
+
+Latency
+
+c) No alerting
+
+No system to alert when:
+
+Disk is full
+
+CPU is 100%
+
+Load balancer is down
+
+Database crashes
+
+You learn about problems only when users complain.
